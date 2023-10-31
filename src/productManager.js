@@ -1,9 +1,8 @@
-import { error } from 'console';
 import fs from 'fs';
 
 export default class ProductManager{
-    constructor(){
-        this.path = "./products.json";
+    constructor(path){
+        this.path = path;
         this.nextId = 1;
         this.products = this.getProducts(this.path);
         if (!Array.isArray(this.products)) {
@@ -15,28 +14,30 @@ export default class ProductManager{
     async addProduct(user){
 
         const {id , title, description, price, thumbnail, code, stock, category} = user
-        const status = true;
-        // user.push(status)
 
-        if(!title || !description || !price || !code || !stock || !category || !status){
+        if(!title || !description || !price || !thumbnail || !code || !stock || !category){
             console.error("Se deben completar todos los campos.");
             return;
         }
-        
-        const products = await this.getProducts(this.path);
+        try {
+            const products = await this.getProducts(this.path);
 
-        let codeRepeated = products.some(p => p.code === code);
-
-
-        if(codeRepeated){
-            throw new Error(`El codigo ${code} ya existe.`);
+            let codeRepeated = products.some(p => p.code === code);
+    
+    
+            if(codeRepeated){
+                throw new Error(`El codigo ${code} ya existe.`);
+            }
+            else{
+                const users =  await getJSONFromFile(this.path);
+                const newUser = {id ,title, description, price, thumbnail, code, stock};
+                users.push(newUser);
+                return saveJSONToFile(this.path, users);
+            };
+        } catch (error) {
+            console.error(`Ha ocurrido un error: ${error.message}`);
         }
-        else{
-            const users =  await getJSONFromFile(this.path);
-            const newUser = {...user, status};
-            users.push(newUser);
-            return saveJSONToFile(this.path, users);
-        };
+
     };
 
     getProducts(){ 
@@ -56,37 +57,27 @@ export default class ProductManager{
 
     async updateProducts(id, newData){
         const products = await this.getProducts();
+        const index = products.findIndex((product) =>{
+            return product.id === id;
+        })
 
-
-        try {
-            const index = products.findIndex((product) =>{
-                return product.id == id;
-            })
-            console.log(products[index])
-            if(index === -1){
-                console.log("producto no encontrado");
-                throw new Error("producto no encontrado");
-            }
-
-            const {newTitle, newDescription, newCode, newPrice, newStatus, newStock, newCategory, newThumbnail,} = newData;
-
-            products[index] = {id: id, 
-                title: newTitle !== undefined ? newTitle : products[index].title,
-                description: newDescription !== undefined ? newDescription : products[index].description,
-                code: newCode !== undefined ? newCode : products[index].code,
-                price: newPrice !== undefined ? newPrice : products[index].price,
-                status: newStatus !== undefined ? newStatus : products[index].status,
-                stock: newStock !== undefined ? newStock : products[index].stock,
-                category: newCategory !== undefined ? newCategory : products[index].category,
-                thumbnail: newThumbnail !== undefined ? newThumbnail : products[index].thumbnail
-            };
-
-        } catch (error) {
-            res.status(404).json({message: 'producto no encontrado'})
+        if(index === -1){
+            console.log("producto no encontrado");
+            return;
         }
 
-
-
+        const {newTitle, newDescription, newCode, newPrice, newStatus, newStock, newCategory, newThumbnail,} = newData;
+        
+        products[index] = {id: id, 
+            title: newTitle !== undefined ? newTitle : products[index].title,
+            description: newDescription !== undefined ? newDescription : products[index].description,
+            code: newCode !== undefined ? newCode : products[index].code,
+            price: newPrice !== undefined ? newPrice : products[index].price,
+            status: newStatus !== undefined ? newStatus : products[index].status,
+            stock: newStock !== undefined ? newStock : products[index].stock,
+            category: newCategory !== undefined ? newCategory : products[index].category,
+            thumbnail: newThumbnail !== undefined ? newThumbnail : products[index].thumbnail
+        };
 
         try {
             await saveJSONToFile(this.path, products);
@@ -97,7 +88,7 @@ export default class ProductManager{
 
     async deleteProducts(id){
         const products = await this.getProducts();
-        const index = products.findIndex((product)=> product.id === id);
+        const index = products.findIndex((product)=> product.id == id);
 
         if(index === -1){
             throw new Error("producto no encontrado");
@@ -119,12 +110,12 @@ export default class ProductManager{
 
 const existFile = async (path) => {
     try {
-      await fs.promises.access(path);
-      return true;
+    await fs.promises.access(path);
+    return true;
     } catch (error) {
-      return false;
+    return false;
     }
-  };
+};
 
 const getJSONFromFile = async (path) => {
     if(!await existFile(path)){

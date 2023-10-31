@@ -1,0 +1,20 @@
+[
+	{
+		"id": "b2022056-03b8-4faa-9f52-bb9c728da0f4",
+		"title": "Hola123",
+		"description": "hermosa descripcion",
+		"price": "123123",
+		"thumbnail": [],
+		"code": "ABC123",
+		"stock": "1233312"
+	},
+	{
+		"id": "99ec5df0-d2c0-40df-8592-b2ed07b0d7dc",
+		"title": "Hola12312",
+		"description": "hermosa descripcionn",
+		"price": "123123333",
+		"thumbnail": [],
+		"code": "ABC12312",
+		"stock": "123331244"
+	}
+]

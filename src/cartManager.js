@@ -15,7 +15,7 @@ export default class CartManager{
         const carts = await this.getCarts();
         const newCart = cart;
         carts.push(newCart);
-       return await saveJSONToFile(this.path, carts);
+    return await saveJSONToFile(this.path, carts);
     }
 
     async addProductToCart(pId, cId){
@@ -54,12 +54,12 @@ export default class CartManager{
 
 const existFile = async (path) => {
     try {
-      await fs.promises.access(path);
-      return true;
+        await fs.promises.access(path);
+        return true;
     } catch (error) {
-      return false;
+        return false;
     }
-  };
+};
 
 const getJSONFromFile = async (path) => {
     if(!await existFile(path)){

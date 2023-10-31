@@ -1,0 +1,24 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.container-realtime{
+    display: flex;
+    justify-content: space-around;
+    gap: 4rem;
+    margin-top: 2rem;
+
+}
+
+.real-time-container{
+    height: 100vh;
+    /* overflow: hidden; */
+}
+
+#list-container{
+    height: 30rem;
+    width: 20rem;
+    overflow: scroll;
+}
